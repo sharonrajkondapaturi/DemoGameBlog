@@ -28,6 +28,7 @@ const initializeDbAndServer = async()=>{
 initializeDbAndServer()
 const gameList = (eachGame)=>{
     return {
+        id:eachGame.id,
         game_name:eachGame.game_name,
         author:eachGame.author,
         content:eachGame.content,
