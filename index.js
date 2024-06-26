@@ -49,7 +49,9 @@ app.get("/games",async(request,response)=>{
     const gameQuery = `INSERT INTO games(game_name,author,game_image_url,content,summary,published_date) 
     VALUES("${game_name}","${author}","${game_image_url}","${content}","${summary}","${published_date}");`
     await db.run(gameQuery)
-    response.send("Successfully Posted")
+    const exactQuery = `SELECT * FROM games;`
+    const successArray = await db.all(exactQuery)
+    response.send(successArray.map(eachGame=> gameList(eachGame)))
  })
 
  app.put("/update/:id",async(request,response)=>{
