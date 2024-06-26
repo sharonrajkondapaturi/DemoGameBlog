@@ -31,6 +31,7 @@ const gameList = (eachGame)=>{
         id:eachGame.id,
         game_name:eachGame.game_name,
         author:eachGame.author,
+        game_image_url:eachGame.game_image_url,
         content:eachGame.content,
         summary:eachGame.summary,
         published_date:eachGame.published_date,
@@ -44,11 +45,19 @@ app.get("/games",async(request,response)=>{
     response.send(gameArray.map(eachGame=> gameList(eachGame)));
 })
  app.post("/allGames",async(request,response)=>{
-    const {game_name,author,content,summary,published_date} = request.body
-    const gameQuery = `INSERT INTO games(game_name,author,content,summary,published_date) 
-    VALUES("${game_name}","${author}","${content}","${summary}","${published_date}");`
+    const {game_name,author,game_image_url,content,summary,published_date} = request.body
+    const gameQuery = `INSERT INTO games(game_name,author,game_image_url,content,summary,published_date) 
+    VALUES("${game_name}","${author}","${game_image_url}","${content}","${summary}","${published_date}");`
     await db.run(gameQuery)
     response.send("Successfully Posted")
+ })
+
+ app.put("/update/:id",async(request,response)=>{
+    const {game_image_url} = request.body
+    const {id} = request.params
+    const gameQuery = `UPDATE games SET game_image_url = "${game_image_url}" WHERE id=${id};`
+    await db.run(gameQuery)
+    response.send("Successfully Updated")
  })
   
 
