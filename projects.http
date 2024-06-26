@@ -1,0 +1,17 @@
+###
+
+GET http://localhost:4000/games
+
+###
+
+POST  http://localhost:4000/allGames
+Content-Type: application/json
+
+{   
+    "game_name":"Sekiro: Shadows Die Twice",
+    "author":"Yuka Kitamura",
+    "game_image_url":"https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ9Z5sMGdfd2F6Kr5qiaiHHUuzYZ7ffKya2OIrVx22bgXeYHEqjkMLzYCOB9_MTMt8By4kN",
+    "content":"In Sekiro: Shadows Die Twice you are the “one-armed wolf”, a disgraced and disfigured warrior rescued from the brink of death. Bound to protect a young lord who is the descendant of an ancient bloodline, you become the target of many vicious enemies, including the dangerous Ashina clan. When the young lord is captured, nothing will stop you on a perilous quest to regain your honor, not even death itself.",   
+    "summary":"Sekiro: Shadows Die Twice is a 2019 action-adventure game developed by FromSoftware. It was released in Japan by FromSoftware and internationally by Activision for the PlayStation 4, Windows and Xbox One in March 2019 and for Stadia in October 2020.",
+    "published_date":"22/03/2019"
+}
