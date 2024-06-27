@@ -2,11 +2,13 @@ const express = require("express")
 const path = require("path")
 const {open} = require("sqlite")
 const sqlite3 = require("sqlite3").verbose()
+const bodyParser = require('body-parser')
 const app = express();
 const dbPath = path.join(__dirname,"projects.db")
 const cors = require("cors")
 app.use(cors())
 app.use(express.json())
+app.use(bodyParser.json())
 let db = null;
 
 const initializeDbAndServer = async()=>{
