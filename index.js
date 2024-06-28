@@ -57,11 +57,24 @@ app.get("/games",async(request,response)=>{
  })
 
  app.put("/update/:id",async(request,response)=>{
-    const {game_image_url} = request.body
+    const {game_image_url,game_name,author,content,summary,published_date} = request.body
     const {id} = request.params
-    const gameQuery = `UPDATE games SET game_image_url = "${game_image_url}" WHERE id=${id};`
+    const gameQuery = `UPDATE games SET game_image_url="${game_image_url}",game_name="${game_name}",author="${author}",content="${content}",summary="${summary}",published_date="${published_date}" 
+    WHERE id=${id};`
     await db.run(gameQuery)
-    response.send("Successfully Updated")
+    const exactQuery = `SELECT * FROM games;`
+    const successArray = await db.all(exactQuery)
+    response.send(successArray.map(eachGame=> gameList(eachGame)))
+ })
+
+ app.delete("/deleteGame/:id",async(request,response)=>{
+    const {id} = request.params
+    const gameQuery = `
+    DELETE FROM games WHERE id = ${id};`
+    await db.run(gameQuery)
+    const exactQuery = `SELECT * FROM games;`
+    const successArray = await db.all(exactQuery)
+    response.send(successArray.map(eachGame=> gameList(eachGame)))
  })
   
 
