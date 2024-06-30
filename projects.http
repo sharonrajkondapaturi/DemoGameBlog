@@ -1,35 +1,41 @@
 ###
 
 GET http://localhost:4000/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikhhbm5haFByYWRlZXB0aGkiLCJpYXQiOjE3MTk3NTEwMTl9.Zm3b3bTYnT_mCPSLHIkG8jdzFPj-PvXzfDuX67IkpnY
 
 ###
 
 POST  http://localhost:4000/allGames
 Content-Type: application/json
 
-{
-    "game_name":"Sharon",
-    "author":"Kondapaturi",
-    "game_image_url":"snsjsnjsnsj",
-    "content":"ssnjsnsjnsjsn",
-    "summary":"Naughty Dog and published by Sony Interactive Entertainment.",
-    "published_date":"19/06/2393"
-}
 
 ###
 
 PUT http://localhost:4000/update/13
 Content-Type: application/json
 
+###
+
+DELETE http://localhost:4000/deleteGame/11
+
+###
+
+POST  http://localhost:4000/register
+Content-Type: application/json
+
 {
-    "game_name":"sorry",
-    "author":"ertyy",
-    "game_image_url":"self",
-    "content":"34eee",
-    "summary":"3reevf",
-    "published_date":"19/05/2393"
+    "username":"HannahPradeepthi",
+    "password":"19942004",
+    "gender":"Female",
+    "age":20
 }
 
 ###
 
-DELETE http://localhost:4000/deleteGame/13
+POST  http://localhost:4000/login
+Content-type: application/json 
+
+{
+    "username":"HannahPradeepthi",
+    "password":"19942004"
+}

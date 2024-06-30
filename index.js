@@ -3,6 +3,8 @@ const path = require("path")
 const {open} = require("sqlite")
 const sqlite3 = require("sqlite3").verbose()
 const bodyParser = require('body-parser')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const app = express();
 const dbPath = path.join(__dirname,"projects.db")
 const cors = require("cors")
@@ -39,13 +41,37 @@ const gameList = (eachGame)=>{
         published_date:eachGame.published_date,
     }
 }
-app.get("/games",async(request,response)=>{
-    const gameQuery = `
-    SELECT * FROM games;
-    `
-    const gameArray = await db.all(gameQuery)
-    response.send(gameArray.map(eachGame=> gameList(eachGame)));
+
+const authenticateToken = (request,response,next)=>{
+    let jwtToken;
+    const authHeader = request.headers["authorization"];
+    if(authHeader !== undefined){
+        jwtToken = authHeader.split(" ")[1]
+    }
+    if(jwtToken === undefined){
+        response.status(400)
+        response.send("No Access Token")
+    }
+    else{
+        jwt.verify(jwtToken,"shaymiles",async(error,payload)=>{
+            if(error){
+                response.send("Invalid Access Token")
+            }
+            else{
+                next()
+            }
+        })
+    }
+}
+
+app.get("/games",authenticateToken,async(request,response)=>{
+          const gameQuery = `
+          SELECT * FROM games;
+           `
+          const gameArray = await db.all(gameQuery)
+           response.send(gameArray.map(eachGame=> gameList(eachGame)));
 })
+
  app.post("/allGames",async(request,response)=>{
     const {game_name,author,game_image_url,content,summary,published_date} = request.body
     const gameQuery = `INSERT INTO games(game_name,author,game_image_url,content,summary,published_date) 
@@ -75,6 +101,45 @@ app.get("/games",async(request,response)=>{
     const exactQuery = `SELECT * FROM games;`
     const successArray = await db.all(exactQuery)
     response.send(successArray.map(eachGame=> gameList(eachGame)))
+ })
+
+ app.post("/register",async(request,response)=>{
+    const {username,password,gender,age} = request.body
+    const hashedPassword = await bcrypt.hash(password,10)
+    const userQuery = `SELECT * FROM users WHERE username = "${username}";`
+    const checkUser = await db.get(userQuery)
+    if(checkUser === undefined){
+        const newUser = `INSERT INTO users(username,password,gender,age)
+        VALUES ("${username}","${hashedPassword}","${gender}","${age}");`
+        await db.run(newUser)
+        response.send("User created successfully")
+    }
+    else{
+        response.status(400)
+        response.send("User already exits")
+    }
+ })
+
+ app.post("/login",async(request,response)=>{
+    const {username,password} = request.body 
+    const userQuery = `SELECT * FROM users WHERE username = "${username}";`
+    const dbUser = await db.get(userQuery)
+    if(dbUser === undefined){
+        response.status(400)
+        response.send("Invalid user")
+    }
+    else{
+        const isPasswordMatched = await bcrypt.compare(password,dbUser.password)
+        if(isPasswordMatched === true){
+            const payload = {username:username}
+            const jwtToken = jwt.sign(payload,"shaymiles",)
+            response.send({jwtToken})
+        }
+        else{
+            response.status(400)
+            response.send("Invalid password")
+        }
+    }
  })
   
 
