@@ -1,6 +1,6 @@
 ###
 
-GET http://localhost:4000/games
+GET http://localhost:4000/games/?category=Action&search=
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikhhbm5haFByYWRlZXB0aGkiLCJpYXQiOjE3MTk3NTEwMTl9.Zm3b3bTYnT_mCPSLHIkG8jdzFPj-PvXzfDuX67IkpnY
 
 ###
@@ -11,12 +11,24 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:4000/update/13
+PUT http://localhost:4000/update/1
 Content-Type: application/json
+
 
 ###
 
-DELETE http://localhost:4000/deleteGame/11
+PUT http://localhost:4000/updateOne/24
+Content-Type: application/json
+
+{    
+    "author":"Hidetaka Miyazaki",
+    "category":"Action role-playing",
+    "content":"As fires fade and the world falls into ruin, journey into a universe filled with more colossal enemies and environments. Players will be immersed into a world of epic atmosphere and darkness through faster gameplay and amplified combat intensity. Fans and newcomers alike will get lost in the game hallmark rewarding gameplay and immersive graphics. Now only embers remain… Prepare yourself once more and Embrace The Darkness!"
+}
+
+###
+
+DELETE http://localhost:4000/deleteGame/14
 
 ###
 

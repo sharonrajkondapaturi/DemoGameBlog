@@ -36,6 +36,7 @@ const gameList = (eachGame)=>{
         game_name:eachGame.game_name,
         author:eachGame.author,
         game_image_url:eachGame.game_image_url,
+        category:eachGame.category,
         content:eachGame.content,
         summary:eachGame.summary,
         published_date:eachGame.published_date,
@@ -64,18 +65,20 @@ const authenticateToken = (request,response,next)=>{
     }
 }
 
-app.get("/games",authenticateToken,async(request,response)=>{
-          const gameQuery = `
-          SELECT * FROM games;
-           `
-          const gameArray = await db.all(gameQuery)
-           response.send(gameArray.map(eachGame=> gameList(eachGame)));
+app.get("/games/",authenticateToken,async(request,response)=>{
+    let gameQuery;
+    let gameArray = null;
+    const {category='',search=''} = request.query
+     gameQuery = `
+            SELECT * FROM games WHERE game_name LIKE '%${search}%' AND category LIKE '%${category}%';`
+    gameArray = await db.all(gameQuery)
+    response.send(gameArray.map(eachGame=> gameList(eachGame)));
 })
 
  app.post("/allGames",async(request,response)=>{
-    const {game_name,author,game_image_url,content,summary,published_date} = request.body
-    const gameQuery = `INSERT INTO games(game_name,author,game_image_url,content,summary,published_date) 
-    VALUES("${game_name}","${author}","${game_image_url}","${content}","${summary}","${published_date}");`
+    const {game_name,author,game_image_url,category,content,summary,published_date} = request.body
+    const gameQuery = `INSERT INTO games(game_name,author,game_image_url,content,category,summary,published_date) 
+    VALUES("${game_name}","${author}","${game_image_url}","${category}","${content}","${summary}","${published_date}");`
     await db.run(gameQuery)
     const exactQuery = `SELECT * FROM games;`
     const successArray = await db.all(exactQuery)
@@ -83,10 +86,20 @@ app.get("/games",authenticateToken,async(request,response)=>{
  })
 
  app.put("/update/:id",async(request,response)=>{
-    const {game_image_url,game_name,author,content,summary,published_date} = request.body
+    const {game_image_url,game_name,author,category,content,summary,published_date} = request.body
     const {id} = request.params
-    const gameQuery = `UPDATE games SET game_image_url="${game_image_url}",game_name="${game_name}",author="${author}",content="${content}",summary="${summary}",published_date="${published_date}" 
+    const gameQuery = `UPDATE games SET game_image_url="${game_image_url}",game_name="${game_name}",author="${author}",content="${content}",summary="${summary}",category="${category}",published_date="${published_date}" 
     WHERE id=${id};`
+    await db.run(gameQuery)
+    const exactQuery = `SELECT * FROM games;`
+    const successArray = await db.all(exactQuery)
+    response.send(successArray.map(eachGame=> gameList(eachGame)))
+ })
+
+ app.put("/updateOne/:id",async(request,response)=>{
+    const {content,category,author} = request.body
+    const {id} = request.params
+    const gameQuery = `UPDATE games SET category="${category}",content="${content}",author="${author}" WHERE id=${id};`
     await db.run(gameQuery)
     const exactQuery = `SELECT * FROM games;`
     const successArray = await db.all(exactQuery)
@@ -133,7 +146,7 @@ app.get("/games",authenticateToken,async(request,response)=>{
         if(isPasswordMatched === true){
             const payload = {username:username}
             const jwtToken = jwt.sign(payload,"shaymiles",)
-            response.send({jwtToken})
+            response.send({jwtToken,username})
         }
         else{
             response.status(400)
